@@ -1,7 +1,8 @@
 -- Refer to manual: https://knot-resolver.readthedocs.io/en/latest/daemon.html#configuration
 
 -- Listen on all interfaces (localhost would not work in Docker)
-net.listen('0.0.0.0')
+-- Changed to non-53 port for ease of use
+net.listen('0.0.0.0', 153)
 net.listen('0.0.0.0', 853, {tls=true})
 
 -- Auto-maintain root TA
@@ -22,7 +23,14 @@ modules = {
 cache.size = 10 * MB
 
 -- DNS over TLS forwarding
-policy.add(policy.all(policy.TLS_FORWARD({{'1.1.1.1', hostname='cloudflare-dns.com', ca_file='/data/DigiCertGlobalRootCA.crt' }})))
+-- Amended for NextDNS
+
+policy.add(policy.all(policy.TLS_FORWARD({
+  {'45.90.28.0', hostname='e31af7.dns1.nextdns.io'},
+  {'2a07:a8c0::', hostname='e31af7.dns1.nextdns.io'},
+  {'45.90.30.0', hostname='e31af7.dns2.nextdns.io'},
+  {'2a07:a8c1::', hostname='e31af7.dns2.nextdns.io'}
+})))
 
 function print_help()
 	print('\nUsage\n'
